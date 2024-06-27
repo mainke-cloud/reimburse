@@ -1,0 +1,52 @@
+{% extends 'bootstrap5/bootstrap5.html' %}
+{% load bootstrap5 %}
+{% load static %}
+
+{% block bootstrap5_extra_head %}
+<script src="{% static 'fontawesomefree/js/all.min.js' %}"></script>
+<link href="{% static 'fontawesomefree/css/all.min.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block bootstrap5_title %}Portal{% endblock %}
+
+{% block bootstrap5_content %}
+    <div class="container mx-auto mt-4">
+      <h1>{% block title %} Selamat datang, {{ request.user.username }}{% endblock %}</h1>
+
+        {% autoescape off %}{% bootstrap_messages %}{% endautoescape %}
+
+        {% block content %}
+        <table class="table table-striped">
+            <tr>
+                <th>Title</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Total</th>
+                <th>State</th>
+                <th>Action</th>
+            </tr>
+            {% for itm in docs %}
+            <tr>
+                <td>{{ itm.title }}</td>
+                <td>{{ itm.start_date }}</td>
+                <td>{{ itm.end_date }}</td>
+                <td>Rp. {{ itm.total }},-</td>
+                <td>{{ itm.get_state_display }}</td>
+                <td>
+                    <a href="{% url 'reimburse-view' itm.id %}" class="btn btn-success">View</a>
+                    {% if itm.state == "D"%}
+                    <a href="{% url 'reimburse-edit' itm.id  %}" class="btn btn-warning">Edit</a>
+                    <a href="{% url 'reimburse-delete' itm.id %}" onclick="if (confirm('Delete selected item?')){return true;}else{event.stopPropagation(); event.preventDefault();};"  class="btn btn-danger">Delete</a>
+                    {% endif  %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="{% url 'reimburse-add' %}" class="btn btn-success">Add</a>
+        <a href="{% url 'reimburse-index' %}" class="btn btn-secondary">My Document</a>
+        <a href="{% url 'reimburse-waiting' %}" class="btn btn-primary">Waiting Approval Document</a>
+        <a href="{% url 'reimburse-involved' %}" class="btn btn-warning">Involved Document</a>
+        {% endblock %}
+    </div>
+
+{% endblock %}
